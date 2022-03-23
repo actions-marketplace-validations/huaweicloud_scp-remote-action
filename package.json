@@ -1,0 +1,48 @@
+{
+  "name": "scp-remote-action",
+  "version": "0.0.1",
+  "private": true,
+  "description": "scp-remote-action,copy local archive file to remote server node by ssh chanel",
+  "main": "lib/main.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write '**/*.ts'",
+    "format-check": "prettier --check '**/*.ts'",
+    "package": "ncc build --source-map",
+    "test": "jest",
+    "all": "npm run build && npm run format && npm run package && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lengxing-lx/scp-remote-action.git"
+  },
+  "keywords": [
+    "actions",
+    "ssh",
+    "remote"
+  ],
+  "author": "wenchui",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/http-client": "^1.0.6",
+    "@actions/io": "^1.0.2",
+    "@actions/tool-cache": "^1.5.5",
+    "@types/fs-extra": "^9.0.13",
+    "fs-extra": "^10.0.1",
+    "semver": "^6.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.25",
+    "@types/semver": "^6.0.0",
+    "@zeit/ncc": "^0.21.0",
+    "eslint-plugin-github": "^4.3.5",
+    "eslint-plugin-jest": "^26.1.1",
+    "jest": "^27.2.5",
+    "jest-circus": "^27.2.5",
+    "nock": "^10.0.6",
+    "prettier": "^1.17.1",
+    "ts-jest": "^27.0.5",
+    "typescript": "^3.8.3"
+  }
+}
