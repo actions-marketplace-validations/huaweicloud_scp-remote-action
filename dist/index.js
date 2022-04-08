@@ -2655,7 +2655,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getInputsTestDownload = exports.getInputsTestUpload = exports.getInputs = void 0;
+exports.dangerCommandSet = exports.IPREGX = exports.getInputs = void 0;
 const core = __importStar(__webpack_require__(470));
 function getInputs() {
     return {
@@ -2667,26 +2667,20 @@ function getInputs() {
     };
 }
 exports.getInputs = getInputs;
-function getInputsTestUpload() {
-    return {
-        ipaddr: '192.168.130.159',
-        username: 'service',
-        password: '**********',
-        operation_type: "upload",
-        operation_list: ["dir /root/kube/conf /usr/local/kubeconf", "file /root/apache-maven-3.3.9-bin.tar.gz /root/"]
-    };
-}
-exports.getInputsTestUpload = getInputsTestUpload;
-function getInputsTestDownload() {
-    return {
-        ipaddr: '192.168.130.159',
-        username: 'service',
-        password: '**********',
-        operation_type: "download",
-        operation_list: ["dir /usr/local/kubeconf /usr/local/", "file /root/apache-maven-3.3.9-bin.tar.gz /usr/local"]
-    };
-}
-exports.getInputsTestDownload = getInputsTestDownload;
+//检测IP正则表达式
+exports.IPREGX = /^((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))(\.|$)){4}$/;
+//高危命令列表，持续完善
+exports.dangerCommandSet = [
+    'poweroff',
+    'reboot',
+    'rm',
+    'mkfs',
+    'file',
+    'dd',
+    'shutdown',
+    '){:|:&};:',
+    '^foo^bar'
+];
 
 
 /***/ }),
@@ -2810,24 +2804,19 @@ exports.genScpCommand = exports.execRemoteSCPCommand = exports.execRemoteScpComm
 const core = __importStar(__webpack_require__(470));
 const cp = __importStar(__webpack_require__(129));
 const utils = __importStar(__webpack_require__(611));
-/**
- *      sshpass -p ${{ secrets.CCE_PASSWORD }}  scp  -o StrictHostKeyChecking=no  target/demoapp.jar root@182.92.156.203:/usr/local/
-        sshpass -p ${{ secrets.CCE_PASSWORD }}  scp  -o StrictHostKeyChecking=no  bin/demoapp.service root@182.92.156.203:/etc/systemd/system/
- */
 function execRemoteScpCommands(inputs) {
     return __awaiter(this, void 0, void 0, function* () {
-        for (var i = 0; i < inputs.operation_list.length; i++) {
-            core.info('exec command:' + inputs.operation_list[i]);
-            let scpCommand = utils.splitScpCommand(inputs.operation_list[i]);
+        for (const scpOPS in inputs.operation_list) {
+            core.info('exec command:' + scpOPS);
+            const scpCommand = utils.splitScpCommand(scpOPS);
             //只有在upload的情况下需要检查本地文件是否存在，如果不存在则跳过这一行
             if (inputs.operation_type === "upload" && !utils.checkLocalFileOrDirExist(inputs.operation_type, scpCommand)) {
                 continue;
             }
-            if (utils.checkScpCommandStart(inputs.operation_list[i]) && utils.checkScpCommandLength(scpCommand, 3)) {
+            if (utils.checkScpCommandStart(scpOPS) && utils.checkScpCommandLength(scpCommand, 3)) {
                 let scppassCommand = 'sshpass -p ' +
                     inputs.password +
                     genScpCommand(scpCommand, inputs.ipaddr, inputs.operation_type, inputs.username);
-                core.info("sshpass scp command : " + scppassCommand);
                 yield execRemoteSCPCommand(scppassCommand);
             }
         }
@@ -2835,24 +2824,31 @@ function execRemoteScpCommands(inputs) {
 }
 exports.execRemoteScpCommands = execRemoteScpCommands;
 /**
- * 本地上传，在第二个路径前加user@ipaddr:
- * 远端下载，在第一个路径前加user@ipaddr:
- * 如果是目录，为scp -r
- *
- * @param scpcommand 执行远程命令
+ * 执行远程命令
+ * @param scpcommand
  */
 function execRemoteSCPCommand(scpcommand) {
     return __awaiter(this, void 0, void 0, function* () {
-        let sshpassCommandResult = yield (cp.execSync(scpcommand) || '').toString();
-        //core.info('result ' + sshpassCommandResult)
+        const sshpassCommandResult = yield (cp.execSync(scpcommand) || '').toString();
+        core.info('result ' + sshpassCommandResult);
     });
 }
 exports.execRemoteSCPCommand = execRemoteSCPCommand;
+/**
+ * 本地上传，在第二个路径前加user@ipaddr:
+ * 远端下载，在第一个路径前加user@ipaddr:
+ * 如果是目录，为scp -r
+ * @param fileArray
+ * @param ipaddr
+ * @param ops_type
+ * @param username
+ * @returns
+ */
 function genScpCommand(fileArray, ipaddr, ops_type, username) {
     let scpCommand = " scp -o StrictHostKeyChecking=no ";
-    let scptype = fileArray[0];
-    let fromPath = fileArray[1];
-    let distPath = fileArray[2];
+    const scptype = fileArray[0];
+    const fromPath = fileArray[1];
+    const distPath = fileArray[2];
     if (scptype === "dir") {
         scpCommand += " -r ";
     }
@@ -4356,8 +4352,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkFileOrDirStat = exports.checkLocalFileOrDirExist = exports.checkScpCommandLength = exports.checkScpCommandStart = exports.splitScpCommand = exports.checkCommandDanger = exports.checkCommandsDanger = exports.checkObejectIsNull = exports.checkIPV4Addr = exports.checkInputs = void 0;
+exports.checkFileOrDirStat = exports.checkLocalFileOrDirExist = exports.checkScpCommandLength = exports.checkScpCommandStart = exports.splitScpCommand = exports.checkParameterIsNull = exports.checkIPV4Addr = exports.checkInputs = void 0;
 const core = __importStar(__webpack_require__(470));
+const context = __importStar(__webpack_require__(482));
 const fs = __importStar(__webpack_require__(232));
 //高危命令列表，持续完善
 const dangerCommandSet = [
@@ -4377,10 +4374,10 @@ const dangerCommandSet = [
  * @returns
  */
 function checkInputs(inputs) {
-    if (checkObejectIsNull(inputs.ipaddr) ||
-        checkObejectIsNull(inputs.username) ||
-        checkObejectIsNull(inputs.password) ||
-        checkObejectIsNull(inputs.operation_type)) {
+    if (checkParameterIsNull(inputs.ipaddr) ||
+        checkParameterIsNull(inputs.username) ||
+        checkParameterIsNull(inputs.password) ||
+        checkParameterIsNull(inputs.operation_type)) {
         core.info('Please fill all the required parameters');
         return false;
     }
@@ -4405,60 +4402,21 @@ exports.checkInputs = checkInputs;
  * @returns
  */
 function checkIPV4Addr(ipaddr) {
-    let ipRegx = /^((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))(\.|$)){4}$/;
-    return ipRegx.test(ipaddr) ? true : false;
+    return context.IPREGX.test(ipaddr);
 }
 exports.checkIPV4Addr = checkIPV4Addr;
 /**
  * 判断字符串是否为空
- * @param s
+ * @param parameter
  * @returns
  */
-function checkObejectIsNull(s) {
-    if (s == undefined || s == null || s == '' || s.trim().length == 0) {
-        return true;
-    }
-    return false;
+function checkParameterIsNull(parameter) {
+    return (parameter == undefined ||
+        parameter == null ||
+        parameter == '' ||
+        parameter.trim().length == 0);
 }
-exports.checkObejectIsNull = checkObejectIsNull;
-/**
- *
- * @param commands 检查是否有影响操作系统安全的高危命令
- * @returns
- */
-function checkCommandsDanger(commands) {
-    var isCommandsDanger = false;
-    for (var i = 0; i < commands.length; i++) {
-        var command = commands[i];
-        if (checkCommandDanger(command)) {
-            isCommandsDanger = true;
-            break;
-        }
-    }
-    return isCommandsDanger;
-}
-exports.checkCommandsDanger = checkCommandsDanger;
-/**
- * 检查命令行中是否有黑名单中的高危命令
- * @param command
- * @returns
- */
-function checkCommandDanger(command) {
-    let isCommandDanger = false;
-    for (var i = 0; i < dangerCommandSet.length; i++) {
-        if (command.indexOf(dangerCommandSet[i]) > -1) {
-            core.info('find danger operation "' +
-                dangerCommandSet[i] +
-                '" in command line "' +
-                command +
-                '",please remove it ');
-            isCommandDanger = true;
-        }
-    }
-    i;
-    return isCommandDanger;
-}
-exports.checkCommandDanger = checkCommandDanger;
+exports.checkParameterIsNull = checkParameterIsNull;
 /**
  * 按空格将切分本地和远端文件路径
  * @param scpCommand
@@ -4475,10 +4433,7 @@ exports.splitScpCommand = splitScpCommand;
  * @returns
  */
 function checkScpCommandStart(scpCommand) {
-    if (scpCommand.startsWith("file") || scpCommand.startsWith("dir")) {
-        return true;
-    }
-    return false;
+    return scpCommand.startsWith("file") || scpCommand.startsWith("dir");
 }
 exports.checkScpCommandStart = checkScpCommandStart;
 /**
@@ -4487,10 +4442,7 @@ exports.checkScpCommandStart = checkScpCommandStart;
  * @returns
  */
 function checkScpCommandLength(scpCommand, arrayLength) {
-    if (scpCommand.length === arrayLength) {
-        return true;
-    }
-    return false;
+    return scpCommand.length === arrayLength;
 }
 exports.checkScpCommandLength = checkScpCommandLength;
 /**
@@ -4505,7 +4457,7 @@ function checkLocalFileOrDirExist(opsType, path) {
         checkPath = path[1];
     }
     if (opsType === "download") {
-        checkPath = path[12];
+        checkPath = path[2];
     }
     return checkFileOrDirStat(path[0], checkPath);
 }
@@ -4683,7 +4635,7 @@ function installSshPassOnSystem() {
             return isInstalld;
         }
         core.info('start install sshpass');
-        let platform = os.platform();
+        const platform = os.platform();
         installSshPassByPlatform(platform);
         return checkSshpassInstall();
     });
@@ -4695,13 +4647,13 @@ exports.installSshPassOnSystem = installSshPassOnSystem;
  */
 function checkSshpassInstall() {
     return __awaiter(this, void 0, void 0, function* () {
-        let sshPass = yield io.which('sshpass');
+        const sshPass = yield io.which('sshpass');
         if (!sshPass) {
             core.info('sshPass not installed or not set to the path');
             return false;
         }
         core.info('sshPass already installed and set to the path');
-        let sshPassVersion = (cp.execSync(`${sshPass} -V`) || '').toString();
+        const sshPassVersion = (cp.execSync(`${sshPass} -V`) || '').toString();
         core.info(sshPassVersion);
         return true;
     });
@@ -4756,7 +4708,7 @@ function installSshPassOnLinux() {
         }
         if (osRelease.indexOf('SUSE') > -1) {
             core.info('current system is OpenSuSE,use Zypper to install sshpass');
-            installCommand = `zypper in docker`;
+            installCommand = `zypper in sshpass`;
         }
         yield installSshPassByCommand(installCommand);
     });
@@ -4768,7 +4720,7 @@ exports.installSshPassOnLinux = installSshPassOnLinux;
  */
 function installSshPassByCommand(command) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('current install command is : ' + command);
+        core.info('current system is Ubuntu,use apt-get to install sshpass');
         const installSshPassResult = yield (cp.execSync(command) || '').toString();
         core.info(installSshPassResult);
     });

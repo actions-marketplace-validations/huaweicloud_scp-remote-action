@@ -16,7 +16,7 @@ export async function installSshPassOnSystem(): Promise<boolean> {
   }
 
   core.info('start install sshpass')
-  let platform = os.platform()
+  const platform = os.platform()
   installSshPassByPlatform(platform)
   return checkSshpassInstall()
 }
@@ -26,13 +26,13 @@ export async function installSshPassOnSystem(): Promise<boolean> {
  * @returns
  */
 export async function checkSshpassInstall(): Promise<boolean> {
-  let sshPass = await io.which('sshpass')
+  const sshPass = await io.which('sshpass')
   if (!sshPass) {
     core.info('sshPass not installed or not set to the path')
     return false
   }
   core.info('sshPass already installed and set to the path')
-  let sshPassVersion = (cp.execSync(`${sshPass} -V`) || '').toString()
+  const sshPassVersion = (cp.execSync(`${sshPass} -V`) || '').toString()
   core.info(sshPassVersion)
   return true
 }
@@ -91,7 +91,7 @@ export async function installSshPassOnLinux(): Promise<void> {
 
   if (osRelease.indexOf('SUSE') > -1) {
     core.info('current system is OpenSuSE,use Zypper to install sshpass')
-    installCommand = `zypper in docker`
+    installCommand = `zypper in sshpass`
   }
   await installSshPassByCommand(installCommand)
 }
@@ -101,7 +101,7 @@ export async function installSshPassOnLinux(): Promise<void> {
  * @param command
  */
 export async function installSshPassByCommand(command: string): Promise<void> {
-  core.info('current install command is : ' + command)
+  core.info('current system is Ubuntu,use apt-get to install sshpass')
   const installSshPassResult = await (cp.execSync(command) || '').toString()
   core.info(installSshPassResult)
 }

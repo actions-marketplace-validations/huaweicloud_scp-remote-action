@@ -19,9 +19,9 @@ const inputsForDownload: context.Inputs = {
     operation_list: ["dir /usr/local/kubeconf /usr/local/","file /root/apache-maven-3.3.9-bin.tar.gz /usr/local"]
 }
 
-// test('check remote',()=>{
-//   scp.execRemoteScpCommands(inputs);
-// })
+test('check remote',()=>{
+  scp.execRemoteScpCommands(inputs);
+})
 
 /**
  * 测试 生成的上传命令是否和预期匹配

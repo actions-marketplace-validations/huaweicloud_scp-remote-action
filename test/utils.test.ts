@@ -4,7 +4,7 @@ import * as context from '../src/context'
 
 const inputs: context.Inputs = {
   ipaddr: '192.168.130.159',
-  username: 'root',
+  username: 'service',
   password: '********',
   operation_type: "upload",
   operation_list: ["dir Users/a/opensource/scp-remote-action /usr/local/wwww/","file /Users/a/opensource/scp-remote-action/package-lock.json /usr/local/nodesrc/"]
@@ -51,3 +51,19 @@ test('check fileList start',()=>{
   expect(utils.checkScpCommandStart(fileList1)).toEqual(true);
   expect(utils.checkScpCommandStart(fileList2)).toEqual(true);
 })
+
+const uploadInputs: context.Inputs = {
+    ipaddr: '192.168.130.159',
+    username: 'service',
+    password: '**********',
+    operation_type: "upload",
+    operation_list: ["dir /root/kube/conf /usr/local/kubeconf","file /root/apache-maven-3.3.9-bin.tar.gz /root/"]
+}
+
+const downloadInputs: context.Inputs = {
+    ipaddr: '192.168.130.159',
+    username: 'service',
+    password: '**********',
+    operation_type: "download",
+    operation_list: ["dir /usr/local/kubeconf /usr/local/","file /root/apache-maven-3.3.9-bin.tar.gz /usr/local"]
+}
