@@ -2810,10 +2810,12 @@ function execRemoteScpCommands(inputs) {
             core.info('exec command:' + scpOPS);
             const scpCommand = utils.splitScpCommand(scpOPS);
             //只有在upload的情况下需要检查本地文件是否存在，如果不存在则跳过这一行
-            if (inputs.operation_type === "upload" && !utils.checkLocalFileOrDirExist(inputs.operation_type, scpCommand)) {
+            if (inputs.operation_type === 'upload' &&
+                !utils.checkLocalFileOrDirExist(inputs.operation_type, scpCommand)) {
                 continue;
             }
-            if (utils.checkScpCommandStart(scpOPS) && utils.checkScpCommandLength(scpCommand, 3)) {
+            if (utils.checkScpCommandStart(scpOPS) &&
+                utils.checkScpCommandLength(scpCommand, 3)) {
                 let scppassCommand = 'sshpass -p ' +
                     inputs.password +
                     genScpCommand(scpCommand, inputs.ipaddr, inputs.operation_type, inputs.username);
@@ -2845,18 +2847,18 @@ exports.execRemoteSCPCommand = execRemoteSCPCommand;
  * @returns
  */
 function genScpCommand(fileArray, ipaddr, ops_type, username) {
-    let scpCommand = " scp -o StrictHostKeyChecking=no ";
+    let scpCommand = ' scp -o StrictHostKeyChecking=no ';
     const scptype = fileArray[0];
     const fromPath = fileArray[1];
     const distPath = fileArray[2];
-    if (scptype === "dir") {
-        scpCommand += " -r ";
+    if (scptype === 'dir') {
+        scpCommand += ' -r ';
     }
-    if (ops_type === "upload") {
-        scpCommand += fromPath + " " + username + "@" + ipaddr + ":" + distPath;
+    if (ops_type === 'upload') {
+        scpCommand += fromPath + ' ' + username + '@' + ipaddr + ':' + distPath;
     }
-    if (ops_type === "download") {
-        scpCommand += username + "@" + ipaddr + ":" + fromPath + " " + distPath;
+    if (ops_type === 'download') {
+        scpCommand += username + '@' + ipaddr + ':' + fromPath + ' ' + distPath;
     }
     return scpCommand;
 }
@@ -4381,7 +4383,8 @@ function checkInputs(inputs) {
         core.info('Please fill all the required parameters');
         return false;
     }
-    if (inputs.operation_type != "upload" && inputs.operation_type != "download") {
+    if (inputs.operation_type != 'upload' &&
+        inputs.operation_type != 'download') {
         core.info('operation_type must be upload or download');
         return false;
     }
@@ -4423,7 +4426,7 @@ exports.checkParameterIsNull = checkParameterIsNull;
  * @returns
  */
 function splitScpCommand(scpCommand) {
-    const fileArray = scpCommand.split(" ");
+    const fileArray = scpCommand.split(' ');
     return fileArray;
 }
 exports.splitScpCommand = splitScpCommand;
@@ -4433,7 +4436,7 @@ exports.splitScpCommand = splitScpCommand;
  * @returns
  */
 function checkScpCommandStart(scpCommand) {
-    return scpCommand.startsWith("file") || scpCommand.startsWith("dir");
+    return scpCommand.startsWith('file') || scpCommand.startsWith('dir');
 }
 exports.checkScpCommandStart = checkScpCommandStart;
 /**
@@ -4452,29 +4455,29 @@ exports.checkScpCommandLength = checkScpCommandLength;
  * @returns
  */
 function checkLocalFileOrDirExist(opsType, path) {
-    let checkPath = "";
-    if (opsType === "upload") {
+    let checkPath = '';
+    if (opsType === 'upload') {
         checkPath = path[1];
     }
-    if (opsType === "download") {
+    if (opsType === 'download') {
         checkPath = path[2];
     }
     return checkFileOrDirStat(path[0], checkPath);
 }
 exports.checkLocalFileOrDirExist = checkLocalFileOrDirExist;
 function checkFileOrDirStat(fileType, checkPath) {
-    core.info("check local file " + checkPath + " exist");
+    core.info('check local file ' + checkPath + ' exist');
     try {
         const stat = fs.statSync(checkPath);
         console.log(stat);
-        if (fileType === "file" && stat.isFile()) {
+        if (fileType === 'file' && stat.isFile()) {
             return true;
         }
-        else if (fileType === "dir" && stat.isDirectory()) {
+        else if (fileType === 'dir' && stat.isDirectory()) {
             return true;
         }
         else {
-            core.info("file Type not match " + checkPath + " is  not " + fileType);
+            core.info('file Type not match ' + checkPath + ' is  not ' + fileType);
             return false;
         }
     }
@@ -4680,7 +4683,7 @@ exports.installSshPassByPlatform = installSshPassByPlatform;
  */
 function installSshPassOnMacos() {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('current system is Ubuntu,use apt-get to install sshpass');
+        core.info('current system is MacOS,use brew to install sshpass');
         yield (cp.execSync(`wget https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb && brew install sshpass.rb`) || '').toString();
     });
 }

@@ -57,7 +57,7 @@ export async function installSshPassByPlatform(
  * 有可能先要完成xcode-select 的安装，可以执行 xcode-select --install
  */
 export async function installSshPassOnMacos(): Promise<void> {
-  core.info('current system is Ubuntu,use apt-get to install sshpass')
+  core.info('current system is MacOS,use brew to install sshpass')
   await (
     cp.execSync(
       `wget https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb && brew install sshpass.rb`
