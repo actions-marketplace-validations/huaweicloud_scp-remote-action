@@ -19,7 +19,7 @@ operation_list:操作文件或者目录列表,格式为 类型 源路径 目标�
 1、上传本地文件和目录到远端服务器
 ```yaml
     - name: scp remote upload
-      uses: lengxing-lx/scp-remote-action@v1.1
+      uses: huaweicloud/scp-remote-action@v1.1
       with:
         ipaddr: "***.***.***.**"
         username: ${{ secrets.USERNAME }}
@@ -32,7 +32,7 @@ operation_list:操作文件或者目录列表,格式为 类型 源路径 目标�
    2、从远端服务器下载文件和目录
 ```yaml
     - name: scp remote download
-      uses: lengxing-lx/scp-remote-action@v1.1
+      uses: huaweicloud/scp-remote-action@v1.1
       with:
         ipaddr: "192.168.130.159"
         username: ${{ secrets.USERNAME }}
