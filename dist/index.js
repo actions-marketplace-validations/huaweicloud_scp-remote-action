@@ -2806,15 +2806,16 @@ const cp = __importStar(__webpack_require__(129));
 const utils = __importStar(__webpack_require__(611));
 function execRemoteScpCommands(inputs) {
     return __awaiter(this, void 0, void 0, function* () {
-        for (const scpOPS in inputs.operation_list) {
-            core.info('exec command:' + scpOPS);
-            const scpCommand = utils.splitScpCommand(scpOPS);
+        //  for (const scpOPS in inputs.operation_list) {
+        for (let i = 0; i < inputs.operation_list.length; i++) {
+            core.info('exec command:' + inputs.operation_list[i]);
+            const scpCommand = utils.splitScpCommand(inputs.operation_list[i]);
             //只有在upload的情况下需要检查本地文件是否存在，如果不存在则跳过这一行
             if (inputs.operation_type === 'upload' &&
                 !utils.checkLocalFileOrDirExist(inputs.operation_type, scpCommand)) {
                 continue;
             }
-            if (utils.checkScpCommandStart(scpOPS) &&
+            if (utils.checkScpCommandStart(inputs.operation_list[i]) &&
                 utils.checkScpCommandLength(scpCommand, 3)) {
                 let scppassCommand = 'sshpass -p ' +
                     inputs.password +
@@ -4414,9 +4415,9 @@ exports.checkIPV4Addr = checkIPV4Addr;
  * @returns
  */
 function checkParameterIsNull(parameter) {
-    return (parameter == undefined ||
-        parameter == null ||
-        parameter == '' ||
+    return (parameter === undefined ||
+        parameter === null ||
+        parameter === '' ||
         parameter.trim().length == 0);
 }
 exports.checkParameterIsNull = checkParameterIsNull;
@@ -4455,7 +4456,7 @@ exports.checkScpCommandLength = checkScpCommandLength;
  * @returns
  */
 function checkLocalFileOrDirExist(opsType, path) {
-    let checkPath = '';
+    let checkPath = "";
     if (opsType === 'upload') {
         checkPath = path[1];
     }

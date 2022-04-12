@@ -6,9 +6,10 @@ import * as utils from './utils'
 export async function execRemoteScpCommands(
   inputs: context.Inputs
 ): Promise<void> {
-  for (const scpOPS in inputs.operation_list) {
-    core.info('exec command:' + scpOPS)
-    const scpCommand: string[] = utils.splitScpCommand(scpOPS)
+  //  for (const scpOPS in inputs.operation_list) {
+  for (let i = 0; i < inputs.operation_list.length; i++) {
+    core.info('exec command:' + inputs.operation_list[i])
+    const scpCommand: string[] = utils.splitScpCommand(inputs.operation_list[i])
     //只有在upload的情况下需要检查本地文件是否存在，如果不存在则跳过这一行
     if (
       inputs.operation_type === 'upload' &&
@@ -17,7 +18,7 @@ export async function execRemoteScpCommands(
       continue
     }
     if (
-      utils.checkScpCommandStart(scpOPS) &&
+      utils.checkScpCommandStart(inputs.operation_list[i]) &&
       utils.checkScpCommandLength(scpCommand, 3)
     ) {
       let scppassCommand: string =

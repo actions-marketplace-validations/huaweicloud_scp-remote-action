@@ -72,7 +72,7 @@ export async function installSshPassOnMacos(): Promise<void> {
  */
 export async function installSshPassOnLinux(): Promise<void> {
   const osRelease = await (cp.execSync(`cat /etc/os-release`) || '').toString()
-  let installCommand: string = 'yum -y install -q sshpass'
+  let installCommand = 'yum -y install -q sshpass'
 
   if (osRelease.indexOf('Ubuntu') > -1 || osRelease.indexOf('Debain')) {
     core.info('current system is Ubuntu,use apt-get to install sshpass')

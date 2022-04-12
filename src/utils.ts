@@ -66,9 +66,9 @@ export function checkIPV4Addr(ipaddr: string): boolean {
  */
 export function checkParameterIsNull(parameter: string): boolean {
   return (
-    parameter == undefined ||
-    parameter == null ||
-    parameter == '' ||
+    parameter === undefined ||
+    parameter === null ||
+    parameter === '' ||
     parameter.trim().length == 0
   )
 }
@@ -114,7 +114,7 @@ export function checkLocalFileOrDirExist(
   opsType: string,
   path: string[]
 ): boolean {
-  let checkPath: string = ''
+  let checkPath = ''
   if (opsType === 'upload') {
     checkPath = path[1]
   }
