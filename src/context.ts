@@ -18,22 +18,18 @@ export function getInputs(): Inputs {
   }
 }
 
-export function getInputsTestUpload(): Inputs {
-  return {
-    ipaddr: '192.168.130.159',
-    username: 'service',
-    password: '**********',
-    operation_type: "upload",
-    operation_list: ["dir /root/kube/conf /usr/local/kubeconf","file /root/apache-maven-3.3.9-bin.tar.gz /root/"]
-  }
-}
+//检测IP正则表达式
+export const IPREGX = /^((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))(\.|$)){4}$/
 
-export function getInputsTestDownload(): Inputs {
-  return {
-    ipaddr: '192.168.130.159',
-    username: 'service',
-    password: '**********',
-    operation_type: "download",
-    operation_list: ["dir /usr/local/kubeconf /usr/local/","file /root/apache-maven-3.3.9-bin.tar.gz /usr/local"]
-  }
-}
+//高危命令列表，持续完善
+export const dangerCommandSet: string[] = [
+  'poweroff',
+  'reboot',
+  'rm',
+  'mkfs',
+  'file',
+  'dd',
+  'shutdown',
+  '){:|:&};:',
+  '^foo^bar'
+]

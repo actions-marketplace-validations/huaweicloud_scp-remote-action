@@ -1,4 +1,4 @@
-name: 'scp-remote-action'
+name: 'Batch Remote SCP Commands'
 description: 'use ssh channel,upload local file and directory to remote server ,or download file and directory from remote server'
 branding:
   color: 'red'
@@ -16,7 +16,7 @@ inputs:
   password: 
     required: true
     description: 'the remote server node login password,use github '
-    default: '1234567890'
+    default: '************'
   operation_type: 
     required: true
     description: "upload or download,如果是upload,会将配置在前面的本地的文件上传到远端服务器,如果是download,会将配置在前面的远端文件下载到本地来"

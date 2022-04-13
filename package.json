@@ -6,11 +6,11 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write '**/*.ts'",
-    "format-check": "prettier --check '**/*.ts'",
+    "format": "prettier --write \"src/*.{ts,tsx}\"",
+    "format-check": "prettier --check \"src/*.{ts,tsx}\"",
     "package": "ncc build --source-map",
-    "test": "jest",
-    "all": "npm run build && npm run format && npm run package && npm run test"
+    "lint": "eslint src  --ext .ts",
+    "all": "npm run lint && npm run build && npm run format && npm run package"
   },
   "repository": {
     "type": "git",
@@ -33,11 +33,16 @@
     "semver": "^6.1.1"
   },
   "devDependencies": {
+    "@cloud/eslint-config-cbc": "^1.7.2",
     "@types/node": "^16.11.25",
     "@types/semver": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
     "@zeit/ncc": "^0.21.0",
-    "eslint-plugin-github": "^4.3.5",
-    "eslint-plugin-jest": "^26.1.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-bevry": "^3.27.0",
+    "eslint-plugin-mocha": "^9.0.0",
     "jest": "^27.2.5",
     "jest-circus": "^27.2.5",
     "nock": "^10.0.6",
