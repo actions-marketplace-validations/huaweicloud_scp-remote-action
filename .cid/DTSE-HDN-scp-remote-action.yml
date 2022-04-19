@@ -1,5 +1,5 @@
 version: 1.0
-name: scp-remote-action
+name: DTSE-HDN-scp-remote-action
 language: nodejs
 
 #  构建工具
