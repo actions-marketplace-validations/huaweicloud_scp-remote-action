@@ -1318,7 +1318,6 @@ const utils = __importStar(__webpack_require__(611));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const inputs = context.getInputs();
-        //const inputs:context.Inputs = context.getInputsForTest();
         //如果参数输入有问题，终止操作
         if (!utils.checkInputs(inputs)) {
             return;
