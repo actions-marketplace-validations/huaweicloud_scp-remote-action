@@ -6,7 +6,6 @@ import * as utils from './utils'
 
 export async function run() {
   const inputs: context.Inputs = context.getInputs()
-  //const inputs:context.Inputs = context.getInputsForTest();
 
   //如果参数输入有问题，终止操作
   if (!utils.checkInputs(inputs)) {
